@@ -2,6 +2,8 @@
 
 A practical, safety-first Git and GitHub workflow toolkit for developers. It combines a Python CLI, local repository inspection, commit-message assistance, ignore-rule generation, conflict reporting, workflow planning, release-readiness checks, backup previews, and reusable GitHub templates.
 
+> **Educational / demo use and user responsibility:** This repository and its contents are provided for educational, demonstration, and informational purposes. Use the software only on repositories and systems you own or are authorized to access. You are responsible for reviewing, testing, and deciding whether to run any code or command, and for keeping independent backups. Use is at your own risk. The maintainer does not provide a guarantee that the software is error-free, secure, or suitable for a particular purpose. To the maximum extent permitted by applicable law, the maintainer disclaims liability for loss or damage arising from use or inability to use this project. Nothing in this notice excludes liability or rights that cannot legally be excluded.
+
 > **Safety first:** inspection and planning commands are read-only. The toolkit never commits, pushes, pulls, resets, cleans, rebases, merges, resolves conflicts, deletes branches, creates tags, or publishes releases automatically. Backup creation is an explicit opt-in operation. Hook templates are printed only and are never installed automatically.
 
 ## Features
