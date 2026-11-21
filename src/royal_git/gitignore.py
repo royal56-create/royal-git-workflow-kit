@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 RULES = {
-    "python": ["__pycache__/", "*.py[cod]", ".venv/", "venv/", ".pytest_cache/", ".coverage", "dist/", "build/", "*.egg-info/"],
-    "node": ["node_modules/", "dist/", "coverage/", ".npm/", ".env", ".env.*"],
+    "python": ["__pycache__/", "*.py[cod]", ".venv/", "venv/", ".pytest_cache/", ".coverage", "dist/", "build/", "*.egg-info/", ".env", ".env.*", "!.env.example"],
+    "node": ["node_modules/", "dist/", "coverage/", ".npm/", ".env", ".env.*", "!.env.example"],
     "java": ["*.class", "*.jar", "target/", ".gradle/", "build/"],
     "c": ["*.o", "*.obj", "*.exe", "*.out", "build/", "cmake-build-*/"],
     "cpp": ["*.o", "*.obj", "*.exe", "*.out", "build/", "cmake-build-*/"],
