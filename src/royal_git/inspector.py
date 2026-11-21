@@ -5,15 +5,15 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .runner import GitError, run_git
+from .runner import run_git
 
 
-_HTTP_USERINFO = re.compile(r"(?i)(https?://)[^/@\\s]+@")
+_HTTP_USERINFO = re.compile(r"(?i)(https?://)[^/@\s]+@")
 
 
 def _redact_remote_credentials(line: str) -> str:
-    """Hide URL user-info before remote URLs are shown to a user."""
-    return _HTTP_USERINFO.sub(r"\\1[REDACTED]@", line)
+    """Hide HTTP(S) URL user-info before remote URLs are shown."""
+    return _HTTP_USERINFO.sub(r"\1[REDACTED]@", line)
 
 
 def inspect_repository(path: str | Path = ".") -> dict[str, object]:
