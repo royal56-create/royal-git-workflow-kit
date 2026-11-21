@@ -9,11 +9,15 @@ from pathlib import Path
 from . import __version__
 from .backup import create_bundle
 from .commits import build_commit_message, validate_commit_message
+from .conflicts import conflict_guidance, inspect_conflicts
 from .gitignore import RULES, generate_gitignore, write_gitignore
+from .hooks import get_hook_template
 from .inspector import inspect_repository, list_branches
+from .releases import release_readiness
 from .runner import GitError, git_executable, run_git
 from .safety import check_command
 from .troubleshoot import explain_error
+from .workflow import build_plan
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -49,6 +53,15 @@ def _parser() -> argparse.ArgumentParser:
 
     trouble = sub.add_parser("troubleshoot", help="look up a common Git error")
     trouble.add_argument("error")
+
+    conflicts = sub.add_parser("conflicts", help="list unresolved merge-conflict paths (read-only)")
+    conflicts.add_argument("--path", default=".")
+    plan = sub.add_parser("plan", help="print a safe workflow plan")
+    plan.add_argument("kind", choices=["feature", "bugfix", "release"])
+    release = sub.add_parser("release-check", help="show advisory release-readiness warnings")
+    release.add_argument("--path", default=".")
+    hook = sub.add_parser("hook-template", help="print an optional pre-commit hook template")
+    hook.add_argument("--name", default="pre-commit", choices=["pre-commit"])
     return parser
 
 
@@ -135,6 +148,36 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
             print(f"Likely cause: {result[0]}")
             print(f"Safe next step: {result[1]}")
+            return 0
+
+        if args.command == "conflicts":
+            found = inspect_conflicts(args.path)
+            if not found:
+                print("No unresolved merge conflicts detected.")
+            else:
+                print("Unresolved paths:")
+                for item in found:
+                    print(f"- {item}")
+                print("\nSafe guidance:")
+                for item in conflict_guidance():
+                    print(f"- {item}")
+            return 0
+
+        if args.command == "plan":
+            for index, step in enumerate(build_plan(args.kind), 1):
+                print(f"{index}. {step}")
+            print("\nPlan only: no Git commands were executed.")
+            return 0
+
+        if args.command == "release-check":
+            for warning in release_readiness(args.path):
+                print(f"- {warning}")
+            print("Advisory only: this command does not tag, publish, push, or modify files.")
+            return 0
+
+        if args.command == "hook-template":
+            print(get_hook_template(args.name), end="")
+            print("# Template output only; this command does not install the hook.", file=sys.stderr)
             return 0
 
     except (GitError, ValueError, OSError, RuntimeError) as exc:
