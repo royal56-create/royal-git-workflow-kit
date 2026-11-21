@@ -6,8 +6,8 @@
 | Doctor | Python version and Git availability/version |
 | Inspector | Root, branch, HEAD, status, remotes, upstream |
 | Branch listing | Local branches |
-| Commit helper | Build and validate Conventional Commit subjects |
-| Gitignore | Preview or create supported templates without overwrite |
+| Commit helper | Build and validate Conventional Commit subjects; CLI suggestion and validation commands |
+| Gitignore | Preview or create supported templates without overwrite; excludes common environment secret files while allowing `.env.example` |
 | Safety checker | Flags selected risky patterns; never executes input |
 | Backup | Preview by default; explicit Git bundle creation and verification |
 | Troubleshooter | Offline common-error lookup |
