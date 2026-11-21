@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Added read-only unresolved merge-conflict inspection and manual guidance.
+- Added feature, bug-fix, and release workflow planning.
+- Added advisory release-readiness checks without tag creation or publishing.
+- Added an optional pre-commit hook template that is printed only and never installed automatically.
+- Added tests and documentation for the new helpers.
+
 ## 1.0.0 — 2026-11-21
 
 - Initial public release of the safety-first Python CLI.
