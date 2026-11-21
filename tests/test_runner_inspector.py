@@ -39,3 +39,17 @@ def test_branch_listing(tmp_path):
 def test_git_command_failure_is_reported(tmp_path):
     with pytest.raises(GitError):
         run_git(["status"], cwd=tmp_path)
+
+
+def test_inspector_redacts_credentials_in_https_remote(tmp_path):
+    repo = tmp_path / "repo-with-remote"
+    repo.mkdir()
+    make_repo(repo)
+    subprocess.run(
+        ["git", "-C", str(repo), "remote", "add", "origin", "https://user:secret-token@example.invalid/org/repo.git"],
+        check=True, capture_output=True,
+    )
+    result = inspect_repository(repo)
+    displayed = "\\n".join(result["remotes"])
+    assert "secret-token" not in displayed
+    assert "[REDACTED]@" in displayed
