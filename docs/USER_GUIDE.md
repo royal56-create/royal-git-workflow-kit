@@ -10,6 +10,18 @@ royal-git doctor
 ## Inspect
 Inside a local repository run `royal-git inspect` and `royal-git branches`. These commands only read repository metadata and status.
 
+## Plan a workflow
+Use `royal-git plan feature`, `royal-git plan bugfix`, or `royal-git plan release` to print a checklist. The planner is instructional and does not run Git commands.
+
+## Inspect merge conflicts
+Run `royal-git conflicts` inside a repository. It lists unresolved paths and gives manual guidance. It does not edit files, stage changes, or complete/abort a merge. Practice only in a disposable repository; see [Conflict Lab](CONFLICT_LAB.md).
+
+## Release readiness
+Run `royal-git release-check` for basic advisory checks. A clean result is not a release guarantee. Run tests, review the diff, changelog, version, compatibility, and rollback plan yourself. The command never creates tags or publishes releases.
+
+## Optional hook template
+Run `royal-git hook-template` to print a sample pre-commit hook. Review and customize it before manually installing it. The toolkit never writes into `.git/hooks`.
+
 ## Commit subject
 `royal-git commit-check "feat(api): add health endpoint"` validates a Conventional Commit subject; it does not create a commit.
 
