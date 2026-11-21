@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import shutil
-import subprocess
 import sys
 from pathlib import Path
 
 from . import __version__
 from .backup import create_bundle
-from .commits import validate_commit_message
+from .commits import build_commit_message, validate_commit_message
 from .gitignore import RULES, generate_gitignore, write_gitignore
 from .inspector import inspect_repository, list_branches
 from .runner import GitError, git_executable, run_git
@@ -31,6 +29,10 @@ def _parser() -> argparse.ArgumentParser:
 
     commit = sub.add_parser("commit-check", help="validate a Conventional Commit subject")
     commit.add_argument("message")
+    suggest = sub.add_parser("commit-suggest", help="build a Conventional Commit subject")
+    suggest.add_argument("--type", required=True, choices=["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert"])
+    suggest.add_argument("--description", required=True)
+    suggest.add_argument("--scope")
 
     ignore = sub.add_parser("gitignore", help="generate .gitignore rules")
     ignore.add_argument("stacks", nargs="+", choices=sorted(RULES))
@@ -88,6 +90,15 @@ def main(argv: list[str] | None = None) -> int:
             valid, message = validate_commit_message(args.message)
             print(message)
             return 0 if valid else 2
+
+        if args.command == "commit-suggest":
+            message = build_commit_message(args.type, args.description, args.scope)
+            print(message)
+            valid, explanation = validate_commit_message(message)
+            if not valid:
+                print(f"Note: {explanation}", file=sys.stderr)
+                return 2
+            return 0
 
         if args.command == "gitignore":
             content = generate_gitignore(args.stacks)
