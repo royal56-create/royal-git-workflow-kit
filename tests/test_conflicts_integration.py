@@ -7,8 +7,8 @@ import pytest
 from royal_git.conflicts import inspect_conflicts
 
 
-def git(repo: Path, *args: str) -> None:
-    subprocess.run(
+def git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
         [shutil.which("git") or "git", *args],
         cwd=repo,
         check=True,
@@ -24,6 +24,7 @@ def test_conflict_inspector_finds_real_merge_conflict(tmp_path: Path):
     git(repo, "init")
     git(repo, "config", "user.email", "test@example.invalid")
     git(repo, "config", "user.name", "Test User")
+    base_branch = git(repo, "symbolic-ref", "--short", "HEAD").stdout.strip()
 
     target = repo / "sample.txt"
     target.write_text("base\n", encoding="utf-8")
@@ -34,7 +35,7 @@ def test_conflict_inspector_finds_real_merge_conflict(tmp_path: Path):
     target.write_text("feature change\n", encoding="utf-8")
     git(repo, "commit", "-am", "feature change")
 
-    git(repo, "checkout", "main") if _branch_exists(repo, "main") else git(repo, "checkout", "master")
+    git(repo, "checkout", base_branch)
     target.write_text("main change\n", encoding="utf-8")
     git(repo, "commit", "-am", "main change")
 
@@ -47,12 +48,3 @@ def test_conflict_inspector_finds_real_merge_conflict(tmp_path: Path):
     )
     assert merge.returncode != 0
     assert inspect_conflicts(repo) == ["sample.txt"]
-
-
-def _branch_exists(repo: Path, branch: str) -> bool:
-    result = subprocess.run(
-        [shutil.which("git") or "git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"],
-        cwd=repo,
-        check=False,
-    )
-    return result.returncode == 0
