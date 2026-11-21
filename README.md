@@ -7,8 +7,8 @@ A practical, safety-first Git and GitHub workflow toolkit for developers. It com
 ## Features
 - **Environment doctor:** check Python, Git availability, and Git version.
 - **Repository inspector:** branch, HEAD, working-tree status, remotes, and upstream summary.
-- **Commit helper:** validate Conventional Commit messages.
-- **Gitignore generator:** generate starter rules for common languages and tools without overwriting existing files.
+- **Commit helper:** generate and validate Conventional Commit messages.
+- **Gitignore generator:** create starter rules for common languages/tools, including environment-secret exclusions.
 - **Safety checker:** flag selected destructive or forceful Git command patterns.
 - **Backup helper:** preview a Git bundle; execute only with an explicit flag.
 - **Troubleshooting reference:** explain common Git errors and safe next steps.
@@ -31,6 +31,7 @@ Development: `python -m pip install -e .`, then `python -m pip install pytest` a
 royal-git doctor
 royal-git inspect
 royal-git branches
+royal-git commit-suggest --type feat --scope cli --description "add repository inspection"
 royal-git commit-check "feat(cli): add repository inspection"
 royal-git gitignore python vscode
 royal-git safety-check "git push --force"
@@ -44,6 +45,7 @@ Backup is preview-only by default. Add `--execute` after reviewing the destinati
 | `doctor` | Check local tool availability |
 | `inspect` | Read-only repository summary |
 | `branches` | List local branches |
+| `commit-suggest` | Build a Conventional Commit subject |
 | `commit-check MESSAGE` | Validate a Conventional Commit message |
 | `gitignore STACK...` | Print or safely write ignore rules |
 | `safety-check COMMAND` | Flag risky Git command patterns |
