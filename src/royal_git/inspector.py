@@ -1,10 +1,19 @@
-"""Read-only local repository inspection."""
+"""Read-only local repository inspection with credential-safe remote display."""
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from .runner import GitError, run_git
+
+
+_HTTP_USERINFO = re.compile(r"(?i)(https?://)[^/@\\s]+@")
+
+
+def _redact_remote_credentials(line: str) -> str:
+    """Hide URL user-info before remote URLs are shown to a user."""
+    return _HTTP_USERINFO.sub(r"\\1[REDACTED]@", line)
 
 
 def inspect_repository(path: str | Path = ".") -> dict[str, object]:
@@ -13,7 +22,8 @@ def inspect_repository(path: str | Path = ".") -> dict[str, object]:
     branch_result = run_git(["branch", "--show-current"], cwd=root, check=False)
     head_result = run_git(["rev-parse", "--short", "HEAD"], cwd=root, check=False)
     status = run_git(["status", "--short", "--branch"], cwd=root).stdout.splitlines()
-    remotes = run_git(["remote", "-v"], cwd=root, check=False).stdout.splitlines()
+    remote_output = run_git(["remote", "-v"], cwd=root, check=False).stdout.splitlines()
+    remotes = [_redact_remote_credentials(line) for line in remote_output]
     upstream = run_git(["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}"], cwd=root, check=False)
 
     return {
